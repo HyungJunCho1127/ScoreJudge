@@ -15,6 +15,7 @@ import java.util.Arrays;
 public class MyDatabaseHelper extends SQLiteOpenHelper {
 
         private Context context;
+        private long result;
         private static final String DATABASE_NAME = "Table.db";
         private static final int DATABASE_VERSION = 1;
         private static final String TABLE_NAME = "battle_scores";
@@ -56,6 +57,9 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_NAME, name);
         cv.put(COLUMN_JUDGE, judgeNo);
         cv.put(COLUMN_ENTRY, entry);
+        cv.put(COLUMN_SCORE1, "empty");
+        cv.put(COLUMN_SCORE2, "empty");
+        cv.put(COLUMN_SCORE3, "empty");
         long result = db.insert(TABLE_NAME, null,cv);
         if (result == -1){
             Toast.makeText(context, "Failed to create", Toast.LENGTH_SHORT).show();
@@ -73,17 +77,30 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor1 = getJudgeScoreColumn1(battleName);
         Cursor cursor2 = getJudgeScoreColumn2(battleName);
         Cursor cursor3 = getJudgeScoreColumn3(battleName);
+        int i = 0;
+        while (i != 1) {
+            cursor1.moveToNext();
+            cursor2.moveToNext();
+            cursor3.moveToNext();
+            if (cursor1.getString(0).equals("empty")) {
+                cv.put(COLUMN_SCORE1, Arrays.toString(scoreArray));
+            }  else if (cursor2.getString(0).equals("empty")){
+                cv.put(COLUMN_SCORE2, Arrays.toString(scoreArray));
+            } else if (cursor3.getString(0).equals("empty")){
+                cv.put(COLUMN_SCORE3, Arrays.toString(scoreArray));
+            }
+            i++;
 
-        if(cursor1.getCount() > 1)  {
-            cv.put(COLUMN_SCORE1, Arrays.toString(scoreArray));
-        } else if(cursor2.getCount() > 1){
-            cv.put(COLUMN_SCORE2, Arrays.toString(scoreArray));
-        } else {
-            cv.put(COLUMN_SCORE3, Arrays.toString(scoreArray));
         }
 
 
-        long result = db.update(TABLE_NAME,cv,"battle_name=?", new String[]{battleName});
+
+        try {
+            result = db.update(TABLE_NAME,cv,"battle_name=?", new String[]{battleName});
+        } catch (IllegalArgumentException e){
+            Toast.makeText(context, "Battle Already Full", Toast.LENGTH_SHORT).show();
+        }
+
         if (result == -1){
             Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show();
         } else {

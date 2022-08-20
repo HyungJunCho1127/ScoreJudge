@@ -16,28 +16,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         newBattleButton = findViewById(R.id.newBattleButton);
-        newBattleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openCreateBattle();
-            }
-        });
+        newBattleButton.setOnClickListener(view -> openCreateBattle());
 
         judgeBattleButton = findViewById(R.id.judgeBattleButton);
-        judgeBattleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                judgeExistingBattle();
-            }
-        });
+        judgeBattleButton.setOnClickListener(view -> judgeExistingBattle());
 
         viewJudgeScores = findViewById(R.id.viewJudgeScores);
-        viewJudgeScores.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                viewScores();
-            }
-        });
+        viewJudgeScores.setOnClickListener(view -> viewScores());
 
     }
 

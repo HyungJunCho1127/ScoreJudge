@@ -96,12 +96,17 @@ public class ScoringActivity extends AppCompatActivity {
             finishBattle();
         }
         position++;
-        competitorCount.setText("Competitor from next battler: "+ String.valueOf(position));
         if (score.getPosition() < competitorTotal){
             nextButton.setText("Next");
         } else {
             nextButton.setText("Finish");
         }
+        if (position  > competitorTotal){
+            competitorCount.setText("Battle Finished");
+        } else {
+            competitorCount.setText("Competitor : "+ String.valueOf(position));
+        }
+
         radioGroup.clearCheck();
     }
 
@@ -137,7 +142,7 @@ public class ScoringActivity extends AppCompatActivity {
         }
         //set text for competitor
         position = score.getPosition();
-        competitorCount.setText("Competitor from start: "+ String.valueOf(position + 1));
+        competitorCount.setText("Competitor "+ String.valueOf(position + 1));
         position++;
         return score;
     }

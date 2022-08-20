@@ -24,8 +24,10 @@ public class DisplayScoresActivity extends AppCompatActivity {
     private ArrayList<String> scores3;
     private ScoreCalculatorAdapter scoreCalculatorAdapter;
 
-    private String newScoreLine;
-    private String[] scoreList;
+    private String newScoreLine,newScoreLine1,newScoreLine2,newScoreLine3;
+    private String[] scoreList, scoreList1, scoreList2,scoreList3;
+    private String[] addedScores;
+    private String scoresAdded;
 
     @Override
 
@@ -63,7 +65,7 @@ public class DisplayScoresActivity extends AppCompatActivity {
         Cursor cursor3 = myDB.getJudgeScoreColumn3(name);
 
         // judge scores 1
-        if (cursor1 == null){
+        if (cursor1.getCount() > 1){
             scores1.add("No Data Found");
             Toast.makeText(this, "No Data", Toast.LENGTH_SHORT).show();
         } else {
@@ -71,16 +73,37 @@ public class DisplayScoresActivity extends AppCompatActivity {
                 scores1.add(cursor1.getString(0));
             }
         }
-
         if (scores1.isEmpty()){
             scores1.add("No Data");
             scores1.add("Judge Battle to View Scores");
             Toast.makeText(this, "No Data", Toast.LENGTH_SHORT).show();
         }
 
-
         scores1 = calculateScores(scores1.get(0));
         return scores1;
+    }
+
+    // not yet
+    private String addAllScores(String score1,String score2,String score3){
+        if (score3 == null){
+            score3 = "0";
+        }
+        if (score2 == null){
+            score3 = "0";
+        }
+        newScoreLine1 = score1.replace("[", "").replace("]", "").replace(" ", "");
+        newScoreLine2 = score2.replace("[", "").replace("]", "").replace(" ", "");
+        newScoreLine3 = score3.replace("[", "").replace("]", "").replace(" ", "");
+        scoreList1 = newScoreLine1.split(",");
+        scoreList2 = newScoreLine2.split(",");
+        scoreList3 = newScoreLine3.split(",");
+
+        for (int i = 0; i < scoreList1.length;i++){
+            addedScores[i] = String.valueOf(Integer.parseInt(scoreList1[i]) +
+                    Integer.parseInt(scoreList2[i]) + Integer.parseInt(scoreList3[i]));
+        }
+        score1 = Arrays.toString(addedScores);
+        return score1;
     }
 
     private ArrayList<String> calculateScores(String score){
