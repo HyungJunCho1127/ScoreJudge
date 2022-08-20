@@ -2,7 +2,6 @@ package com.example.scorejudge;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -15,6 +14,7 @@ import java.util.Arrays;
 public class MyDatabaseHelper extends SQLiteOpenHelper {
 
         private Context context;
+        private long result;
         private static final String DATABASE_NAME = "Table.db";
         private static final int DATABASE_VERSION = 1;
         private static final String TABLE_NAME = "battle_scores";
@@ -56,6 +56,22 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_NAME, name);
         cv.put(COLUMN_JUDGE, judgeNo);
         cv.put(COLUMN_ENTRY, entry);
+        if (judgeNo.equals("1")){
+            cv.put(COLUMN_SCORE1, "empty");
+            cv.put(COLUMN_SCORE2, "Closed");
+            cv.put(COLUMN_SCORE3, "Closed");
+        }
+        else if (judgeNo.equals("2")){
+            cv.put(COLUMN_SCORE1, "empty");
+            cv.put(COLUMN_SCORE2, "empty");
+            cv.put(COLUMN_SCORE3, "Closed");
+        } else if (judgeNo.equals("3")) {
+            cv.put(COLUMN_SCORE1, "empty");
+            cv.put(COLUMN_SCORE2, "empty");
+            cv.put(COLUMN_SCORE3, "empty");
+        }
+
+
         long result = db.insert(TABLE_NAME, null,cv);
         if (result == -1){
             Toast.makeText(context, "Failed to create", Toast.LENGTH_SHORT).show();
@@ -63,6 +79,50 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             Toast.makeText(context, "Battle Created", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    public int battleFullChecker(String battleName, String judge){
+        System.out.println("hit at battle full checker at Databasehelper");
+        System.out.println("judge is " + judge);
+        SQLiteDatabase db = this.getReadableDatabase();
+        // cursor to check if column is null
+        Cursor cursor1 = getJudgeScoreColumn1(battleName);
+        Cursor cursor2 = getJudgeScoreColumn2(battleName);
+        Cursor cursor3 = getJudgeScoreColumn3(battleName);
+        int i = 0;
+        while (i != 1) {
+            cursor1.moveToNext();
+            cursor2.moveToNext();
+            cursor3.moveToNext();
+            System.out.println("cursor 1 is " + (cursor1.getString(0)));
+            if (judge.equals("1")){
+                if (cursor1.getString(0).equals("empty")) {
+                    System.out.println("Hit at Judge 1");
+                    return 1;
+                } else {
+                    return 0;
+                }
+            } else if (judge.equals("2")){
+                if ((cursor1.getString(0).equals("empty") || (cursor2.getString(0).equals("empty")))){
+                    System.out.println("Hit at Judge 2");
+                    return 1;
+                } else {
+                    return 0;
+                }
+            } else if (judge.equals("3")){
+                if ((cursor1.getString(0).equals("empty") || (cursor2.getString(0).equals("empty"))
+                || cursor3.getString(0).equals("empty"))){
+                    System.out.println("Hit at Judge 3");
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+            i++;
+
+        }
+
+        return 0;
     }
 
     public void insertJudgeScore(String battleName, int[] scoreArray){
@@ -73,17 +133,28 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor1 = getJudgeScoreColumn1(battleName);
         Cursor cursor2 = getJudgeScoreColumn2(battleName);
         Cursor cursor3 = getJudgeScoreColumn3(battleName);
+        int i = 0;
+        while (i != 1) {
+            cursor1.moveToNext();
+            cursor2.moveToNext();
+            cursor3.moveToNext();
+            if (cursor1.getString(0).equals("empty")) {
+                cv.put(COLUMN_SCORE1, Arrays.toString(scoreArray));
+            }  else if (cursor2.getString(0).equals("empty")){
+                cv.put(COLUMN_SCORE2, Arrays.toString(scoreArray));
+            } else if (cursor3.getString(0).equals("empty")){
+                cv.put(COLUMN_SCORE3, Arrays.toString(scoreArray));
+            }
+            i++;
 
-        if(cursor1.getCount() > 1)  {
-            cv.put(COLUMN_SCORE1, Arrays.toString(scoreArray));
-        } else if(cursor2.getCount() > 1){
-            cv.put(COLUMN_SCORE2, Arrays.toString(scoreArray));
-        } else {
-            cv.put(COLUMN_SCORE3, Arrays.toString(scoreArray));
         }
 
+        try {
+            result = db.update(TABLE_NAME,cv,"battle_name=?", new String[]{battleName});
+        } catch (IllegalArgumentException e){
+            Toast.makeText(context, "Battle Already Full", Toast.LENGTH_SHORT).show();
+        }
 
-        long result = db.update(TABLE_NAME,cv,"battle_name=?", new String[]{battleName});
         if (result == -1){
             Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show();
         } else {
@@ -102,8 +173,29 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor checkBattleNameExists(String battleName){
+        String query = "SELECT battle_name FROM " + TABLE_NAME + " WHERE battle_name = " + "'" +battleName+"'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        if (db != null){
+            cursor =db.rawQuery(query, null);
+        }
+        return cursor;
+    }
+
     public Cursor getCompetitorCount(String battleName){
         String query = "SELECT entry_count FROM " + TABLE_NAME + " WHERE battle_name = " + "'" +battleName+"'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        if (db != null){
+            cursor = db.rawQuery(query, null);
+
+        }
+        return cursor;
+    }
+
+    public Cursor getJudgeCount(String battleName){
+        String query = "SELECT judge_count FROM " + TABLE_NAME + " WHERE battle_name = " + "'" +battleName+"'";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = null;
         if (db != null){
@@ -141,5 +233,16 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             cursor =db.rawQuery(query, null);
         }
         return cursor;
+    }
+
+    public void deleteRow(String battleName){
+        SQLiteDatabase db = this.getWritableDatabase();
+        long result = db.delete(TABLE_NAME,"battle_name=?", new String[]{battleName});
+
+        if (result == -1){
+            Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Battle Deleted", Toast.LENGTH_SHORT).show();
+        }
     }
 }

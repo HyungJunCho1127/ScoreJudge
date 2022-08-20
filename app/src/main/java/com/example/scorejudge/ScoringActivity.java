@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ScoringActivity extends AppCompatActivity {
-    private TextView battleName, competitorCount;
+    private TextView battleName, competitorCount, competitor_text;
     private RadioGroup radioGroup;
     private RadioButton rb1,rb2,rb3,rb4,rb5,rb6,rb7,rb8,rb9,rb10;
     private Button nextButton;
@@ -31,6 +31,7 @@ public class ScoringActivity extends AppCompatActivity {
         // set battle name
         name = getAndSetIntentData();
         // declare
+        competitor_text = findViewById(R.id.competitor_text);
         radioGroup = findViewById(R.id.radio_group);
         rb1 = findViewById(R.id.radio_button1);
         rb2 = findViewById(R.id.radio_button2);
@@ -87,21 +88,57 @@ public class ScoringActivity extends AppCompatActivity {
         RadioButton rbSelected = findViewById(radioGroup.getCheckedRadioButtonId());
         // save input into int array
         int input = radioGroup.indexOfChild(rbSelected) +1;
+        switch (input) {
+            case 1:
+                input = 10;
+                break;
+            case 2:
+                input = 9;
+                break;
+            case 3:
+                input = 8;
+                break;
+            case 4:
+                input = 7;
+                break;
+            case 5:
+                input = 6;
+                break;
+            case 6:
+                input = 5;
+                break;
+            case 7:
+                input = 4;
+                break;
+            case 8:
+                input = 3;
+                break;
+            case 9:
+                input = 2;
+                break;
+            case 10:
+                input = 1;
+                break;
+        }
         score.getScoreArray()[score.getPosition()] = input;
-        System.out.println("recorded score is " + score.getScoreArray()[score.getPosition()]);
-        System.out.println("position is " +score.getPosition());
+
         score.increasePosition(score.getPosition());
-        System.out.println("position is now " +score.getPosition());
+
         if (position >= competitorTotal) {
             finishBattle();
         }
         position++;
-        competitorCount.setText("Competitor from next battler: "+ String.valueOf(position));
         if (score.getPosition() < competitorTotal){
             nextButton.setText("Next");
         } else {
             nextButton.setText("Finish");
         }
+        if (position  > competitorTotal){
+            competitor_text.setText("Finished");
+        } else {
+            competitorCount.setText(String.valueOf(position));
+        }
+
         radioGroup.clearCheck();
     }
 
@@ -137,7 +174,7 @@ public class ScoringActivity extends AppCompatActivity {
         }
         //set text for competitor
         position = score.getPosition();
-        competitorCount.setText("Competitor from start: "+ String.valueOf(position + 1));
+        competitorCount.setText(String.valueOf(position + 1));
         position++;
         return score;
     }

@@ -33,6 +33,10 @@ public class Ranking {
         return competitorScore;
     }
 
+    public void setCompetitorScore(int competitorScore) {
+        this.competitorScore = competitorScore;
+    }
+
     @Override
     public String toString() {
         return "Score{" +

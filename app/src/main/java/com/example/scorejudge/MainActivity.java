@@ -7,37 +7,25 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class MainActivity extends AppCompatActivity {
-    Button newBattleButton, judgeBattleButton, viewJudgeScores;
+    Button judgeBattleButton, viewJudgeScores;
+    FloatingActionButton add_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        newBattleButton = findViewById(R.id.newBattleButton);
-        newBattleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openCreateBattle();
-            }
-        });
+        add_button = findViewById(R.id.addBattleButton);
+        add_button.setOnClickListener(view -> openCreateBattle());
 
         judgeBattleButton = findViewById(R.id.judgeBattleButton);
-        judgeBattleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                judgeExistingBattle();
-            }
-        });
+        judgeBattleButton.setOnClickListener(view -> judgeExistingBattle());
 
         viewJudgeScores = findViewById(R.id.viewJudgeScores);
-        viewJudgeScores.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                viewScores();
-            }
-        });
+        viewJudgeScores.setOnClickListener(view -> viewScores());
 
     }
 
@@ -53,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void viewScores(){
         Intent intent = new Intent(this, ShowBattlesActivity.class);
+        startActivity(intent);
+    }
+
+    private void deleteBattle(){
+        Intent intent = new Intent(this, DeleteBattleActivity.class);
         startActivity(intent);
     }
 

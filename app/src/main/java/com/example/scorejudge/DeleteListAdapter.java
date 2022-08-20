@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,13 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class BattleListAdapter extends RecyclerView.Adapter<BattleListAdapter.MyViewHolder> {
+public class DeleteListAdapter extends RecyclerView.Adapter<DeleteListAdapter.MyViewHolder> {
 
     Context context;
     ArrayList battle_name;
     int position;
 
-    BattleListAdapter(Context context, ArrayList battle_name){
+    DeleteListAdapter(Context context, ArrayList battle_name){
         this.context = context;
         this.battle_name = battle_name;
     }
@@ -41,7 +40,7 @@ public class BattleListAdapter extends RecyclerView.Adapter<BattleListAdapter.My
         holder.mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context,ViewSelectedBattleActivity.class);
+                Intent intent = new Intent(context,ConfirmDeleteBattleActivity.class);
                 intent.putExtra("battleName", String.valueOf(battle_name.get(position)));
                 context.startActivity(intent);
             }
