@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ScoreJudge</string>
+    <string name="app_name">Dance Battle Judge App</string>
 
     <string-array name="judgeNo">
         <item>1</item>
