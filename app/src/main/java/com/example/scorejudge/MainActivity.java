@@ -44,10 +44,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void deleteBattle(){
-        Intent intent = new Intent(this, DeleteBattleActivity.class);
-        startActivity(intent);
-    }
-
-
 }

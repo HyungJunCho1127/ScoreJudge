@@ -18,10 +18,6 @@
             android:exported="false" />
         <activity
             android:name=".ConfirmDeleteBattleActivity"
-            android:exported="false"
-            android:parentActivityName=".DeleteBattleActivity" />
-        <activity
-            android:name=".DeleteBattleActivity"
             android:exported="false" />
         <activity
             android:name=".DisplayScoresActivity"
